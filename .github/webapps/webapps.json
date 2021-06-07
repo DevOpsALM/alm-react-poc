@@ -1,0 +1,6 @@
+{
+  "alm-app-react-almreactpoc-dev": {
+    "resource_group": "rg-by-workflow-shared-dev-eus2-01",
+    "webapp_url": "https://alm-app-react-almreactpoc-dev.azurewebsites.net"
+  }
+}
