@@ -12,8 +12,8 @@ jobs:
       AZURE_RESOURCE_GROUP: "${{ github.event.client_payload.resource_group }}"
       AZURE_DEPLOY_ENVIRONMENT: "${{ github.event.client_payload.environment }}"
       AZURE_WEB_APP_TYPE: "${{ github.event.client_payload.app_type }}"
-      AZURE_CLIENT_ID: "${{ github.event.client_payload.client_id }}"
-      AZURE_CLIENT_SECRET: "${{ github.event.client_payload.client_secret }}"
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
       AZURE_TENANT_ID: "${{ github.event.client_payload.tenant_id }}"
       AZURE_WEB_APP_NAME_PREFIX: 'alm-app'
       AZURE_WEB_APP_SKU: 'S1'
