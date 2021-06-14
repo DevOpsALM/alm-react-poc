@@ -25,8 +25,8 @@ jobs:
           ${{ env.STRATOSPHERE_API_URL }}/geographies/${{ env.GEOGRAPHY }}/projects/${{ env.PROJECT_NAME }}/resources/container-web/${{ env.AZURE_CONTAINER_WEB_APP_NAME }} > temp.json
           CONTAINER_WEB_APP_NAME=`cat temp.json | jq -r '.name'`
           echo $CONTAINER_WEB_APP_NAME
-          if [[ ! -z "$CONTAINER_WEB_APP_NAME" ]]; then
-            echo "not null"
+          if [[ -z "$CONTAINER_WEB_APP_NAME" ]]; then
+            echo "null"
           else
             echo "$AZURE_CONTAINER_WEB_APP_NAME not found"
             exit 1
