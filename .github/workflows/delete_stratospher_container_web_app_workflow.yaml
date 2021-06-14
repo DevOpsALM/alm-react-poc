@@ -23,5 +23,9 @@ jobs:
           -H "Authorization: Bearer ${{ env.STRATOSPHERE_ACCESS_TOKEN }}" \
           --request GET \
           ${{ env.STRATOSPHERE_API_URL }}/geographies/${{ env.GEOGRAPHY }}/projects/${{ env.PROJECT_NAME }}/resources/container-web/${{ env.AZURE_CONTAINER_WEB_APP_NAME }} > temp.json
-          AZURE_ACR_STATUS=`cat temp.json | jq -r '.name'`
-          echo $AZURE_ACR_STATUS
+          CONTAINER_WEB_APP_NAME=`cat temp.json | jq -r '.name'`
+          if [[ ! -z "$CONTAINER_WEB_APP_NAME" ]]; then
+            echo "not null"
+          else
+            echo "$AZURE_CONTAINER_WEB_APP_NAME not found"
+            exit 1
