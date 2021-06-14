@@ -21,20 +21,9 @@ jobs:
         curl -H "accept: application/json" \
           -H "Content-Type: application/json" \
           -H "Authorization: Bearer ${{ env.STRATOSPHERE_ACCESS_TOKEN }}" \
-          --request DELETE \
-          ${{ env.STRATOSPHERE_API_URL }}/geographies/${{ env.GEOGRAPHY }}/projects/${{ env.PROJECT_NAME }}/resources/container-web/${{ env.AZURE_CONTAINER_WEB_APP_NAME }}
-  
-    - name: Update Container Web App Endpoints File
-      run: |
-        jq --arg webapp_name $AZURE_CONTAINER_WEB_APP_NAME 'del(.[($webapp_name)])' < .github/contaierweb/contaierweb.json > tmp_webapps.json && mv tmp_webapps.json .github/contaierweb/contaierweb.json
-        git config --global user.email "siva.medapati@blueyonder.com"
-        git config --global user.name "Siva Medapati"
-        git config pull.rebase false
-        git pull origin ${BRANCH}
-        git add -f .github/contaierweb/contaierweb.json
-        if [ -z "$(git status --porcelain)" ]; then 
-          echo "Nothing to commit"
-        else 
-          git commit -m "update webapp endpoint"
-          git push origin ${BRANCH}
-        fi
+          --request PUT \
+          --data '{"spec": {"container_registry": {"access_policies": [{"name": "spn-alm", "type": "resource"},{"name": "grp-sec-saas-sub-lplat-test-reader", "type": "group"}]}}}' \
+          ${{ env.STRATOSPHERE_API_URL }}/geographies/${{ env.GEOGRAPHY }}/projects/${{ env.PROJECT_NAME }}/resources/azure-container-registry/${{ env.AZURE_ACR_NAME }} > temp.json
+          echo "AZURE_ACR_REPO_NAME=$(jq -r '.status.azure.resource_name' temp.json)" >> $GITHUB_ENV
+          AZURE_ACR_STATUS=`cat temp.json | jq -r '.resources.name'`
+          echo $AZURE_ACR_STATUS
