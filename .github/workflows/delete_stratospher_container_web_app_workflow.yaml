@@ -29,3 +29,4 @@ jobs:
           else
             echo "$AZURE_CONTAINER_WEB_APP_NAME not found"
             exit 1
+          fi
