@@ -8,8 +8,8 @@ jobs:
     timeout-minutes: 20
     env:
       GITHUB_REPO_NAME: "${{ github.event.client_payload.repo }}"
-      AZURE_SUBSCRIPTION: "${{ github.event.client_payload.subscription }}"
-      AZURE_RESOURCE_GROUP: "${{ github.event.client_payload.resource_group }}"
+      AZURE_SUBSCRIPTION: ${{ secrets.AZURE_SUBSCRIPTION }}
+      AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
       AZURE_DEPLOY_ENVIRONMENT: "${{ github.event.client_payload.environment }}"
       AZURE_FUNCTION_APP_TYPE: "${{ github.event.client_payload.app_type }}"
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
