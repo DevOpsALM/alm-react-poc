@@ -8,8 +8,8 @@ jobs:
     timeout-minutes: 20
     env:
       AZURE_FUNCTION_APP_NAME: "${{ github.event.client_payload.functionapp_name }}"
-      AZURE_RESOURCE_GROUP: "${{ github.event.client_payload.resource_group }}"
-      AZURE_SUBSCRIPTION: "${{ github.event.client_payload.subscription }}"
+      AZURE_SUBSCRIPTION: ${{ secrets.AZURE_SUBSCRIPTION }}
+      AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
       AZURE_TENANT_ID: "${{ github.event.client_payload.tenant_id }}"
@@ -23,7 +23,13 @@ jobs:
 
     - name: Delete Azure function App
       run: |
-        az functionapp delete --name $AZURE_FUNCTION_APP_NAME --resource-group $AZURE_RESOURCE_GROUP
+        if [[ -n $(echo $(az functionapp list --query "[?name=='$AZURE_FUNCTION_APP_NAME']") | sed 's/\(\[\|\]\)//g') ]]; then
+          az functionapp delete --name $AZURE_FUNCTION_APP_NAME --resource-group $AZURE_RESOURCE_GROUP
+        else
+          echo "$AZURE_FUNCTION_APP_NAME not found"
+          exit 1
+        fi
+        
     - name: Update Azure Function App Endpoints File
       run: |
         jq --arg funcationapp_name $AZURE_FUNCTION_APP_NAME 'del(.[($funcationapp_name)])' < .github/functions/functions.json > tmp_webapps.json && mv tmp_webapps.json .github/functions/functions.json
