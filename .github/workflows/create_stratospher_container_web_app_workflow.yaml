@@ -5,6 +5,7 @@ on:
 jobs:
   create-container-web-app:      
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       GITHUB_REPO_NAME: "${{ github.event.client_payload.strato.repo }}"
       AZURE_SUBSCRIPTION: ${{ secrets.STRATO_AZURE_SUBSCRIPTION }}
@@ -85,6 +86,15 @@ jobs:
           ${{ env.STRATOSPHERE_API_URL }}/geographies/${{ env.GEOGRAPHY }}/projects/${{ env.PROJECT_NAME }}/resources/container-web/${{ env.AZURE_CONTAINER_WEB_APP_NAME }} > temp.json
           echo "CONTAINER_WEB_ENDPOINT_URL=$(jq -r '.links.endpoint.url' temp.json)" >> $GITHUB_ENV
           AZURE_CONTAINER_WEB_STATUS=`cat temp.json | jq -r '.status.state'`
+        while [ "$AZURE_CONTAINER_WEB_STATUS" != 'deployed' ]
+        do
+        curl -H "accept: application/json" \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer ${{ env.STRATOSPHERE_ACCESS_TOKEN }}" \
+          --request GET \
+          ${{ env.STRATOSPHERE_API_URL }}/geographies/${{ env.GEOGRAPHY }}/projects/${{ env.PROJECT_NAME }}/resources/container-web/${{ env.AZURE_CONTAINER_WEB_APP_NAME }} > temp.json
+          AZURE_CONTAINER_WEB_STATUS=`cat temp.json | jq -r '.status.state'`
+        done 
         
     - name: Update Stratospher Container Web Endpoints File
       run: |
